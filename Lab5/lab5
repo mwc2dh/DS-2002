@@ -1,0 +1,100 @@
+# in command prompt/terminal:
+# python3 -m pip install pgeocode
+# python3 -m pip install requests
+# python3 -m pip install pymongo / pip install pymongo
+# run as python file
+
+import pgeocode
+import requests
+import pymongo
+import pandas as pd
+import datetime
+from bs4 import BeautifulSoup
+
+country = pgeocode.Nominatim('US')
+
+#get zipcode with api data
+zipcode = input("Enter zip code: ")
+long = str(country.query_postal_code(zipcode)['longitude'])
+lat = str(country.query_postal_code(zipcode)['latitude'])
+
+#input into webscraping page
+if long != "nan" and lat != "nan":
+    page = requests.get("https://forecast.weather.gov/MapClick.php?lat=" + lat + "&" + "lon=" + long)
+
+    #scrape 7-day forecast and get periods
+    soup = BeautifulSoup(page.content, 'html.parser')
+    seven_day = soup.find(id="seven-day-forecast")
+    forecast_items = seven_day.find_all(class_="tombstone-container")
+
+    #get periods
+    period_tags = seven_day.select(".tombstone-container .period-name")
+    periods = [pt.get_text() for pt in period_tags]
+
+    #get 7-day data
+    short_descs = [sd.get_text() for sd in seven_day.select(".tombstone-container .short-desc")]
+    temps = [t.get_text() for t in seven_day.select(".tombstone-container .temp")]
+    descs = [d["title"] for d in seven_day.select(".tombstone-container img")]
+
+    for i in range(len(periods)):
+        print(periods[i] + ": " + short_descs[i] + ' ' + temps[i] + ' ' + descs[i] + '\n')
+
+    #get current condition
+    curr_cond = soup.find(id="current_conditions_detail").find_all(name="td")
+
+    print("Humidity: " + curr_cond[1].get_text())
+    print("Windspeed: " + curr_cond[3].get_text())
+    print("Dewpoint: " + curr_cond[7].get_text())
+    print("Last Update Time: " + curr_cond[-1].get_text().strip())
+
+    humidity = curr_cond[1].get_text()
+    windspeed = curr_cond[3].get_text()
+    dewpoint = curr_cond[7].get_text()
+    lastupdate = curr_cond[-1].get_text().strip()
+
+else:
+    print("Please enter a valid 5 digit zip code")
+
+#connecting to mongo db
+host_name = "localhost"
+port = "27017"
+
+atlas_cluster_name = "sandbox"
+atlas_default_dbname = "local"
+
+conn_str = {
+    "local" : f"mongodb://{host_name}:{port}/",
+#    "atlas" : f"mongodb+srv://{atlas_user_name}:{atlas_password}@{atlas_cluster_name}.zibbf.mongodb.net/{atlas_default_dbname}"
+}
+
+client = pymongo.MongoClient(conn_str["local"])
+#print(f"Local Connection String: {conn_str['local']}")
+
+if long != "nan" and lat != "nan":
+    #create db
+    db_name = "lab5data"
+    db = client[db_name]
+    #print(client.list_database_names())
+
+    #add/update forecasts collection
+    forecast = {}
+    forecast.update({"Zipcode" : zipcode})
+    for i in range(len(periods)):
+        forecast.update({periods[i] : short_descs[i] + ' ' + temps[i] + ' ' + descs[i]})
+    forecasts = db.forecasts
+    forecast_id = forecasts.insert_one(forecast).inserted_id
+
+    #add/update current conditions collection
+    current_condition = {
+        "Zipcode" : zipcode,
+        "Humidity" : humidity,
+        "Windspeed" : windspeed,
+        "Dewpoint" : dewpoint,
+        "Last Update Time" : lastupdate
+    }
+
+    current_conditions = db.current_conditions
+    current_condition_id = current_conditions.insert_one(current_condition).inserted_id
+
+# print("Databases: ", client.list_database_names())
+# print("Collections: ", db.list_collection_names())

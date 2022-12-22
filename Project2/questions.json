@@ -1,0 +1,53 @@
+{"questions": [
+    {"tag": "top5shows2020",
+     "patterns": ["What were the top 5 shows on Netflix in 2020?", "Show me the top 5 shows on Netflix in 2020."],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "top5movies2020",
+     "patterns": ["What were the top 5 movies on Netflix in 2020?", "Show me the top 5 movies on Netflix in 2020."],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "top3dramashows",
+    "patterns": ["What are the top 3 drama shows on Netflix?", "Show me the top 3 drama shows on Netflix.", "top 3 drama shows"],
+    "responses": [],
+    "context_set": ""
+    },
+    {"tag": "top3comedymovies",
+    "patterns": ["What are the top 3 comedy movies on Netflix?", "Show me the top 3 comedy movies on Netflix."],
+    "responses": [],
+    "context_set": ""
+    },
+    {"tag": "topshow2020",
+     "patterns": ["What was the top show on Netflix in 2020?", "Show me the top show on Netflix in 2020.", "Which show was most popular on Netflix in 2020?"],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "genretopshow2020",
+     "patterns": ["What was the genre of the top show on Netflix in 2020?", "Show me the genre of the top show on Netflix in 2020."],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "topmovie2020",
+     "patterns": ["What was the top movie in 2020?", "Show me the top movie in 2020.", "Which movie was most popular in 2020?"],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "genretopmovie2020",
+     "patterns": ["What was the genre of the top movie on Netflix in 2020?", "Show me the genre of the top movie on Netflix in 2020."],
+     "responses": [],
+     "context_set": ""
+    },
+    {"tag": "longestmovie",
+    "patterns": ["What is the longest movie on Netflix?", "What movie on Netflix has the longest runtime?", "Show me the movie with the longest runtime on Netflix.", "longest movie"],
+    "responses": [],
+    "context_set": ""
+    },
+    {"tag": "seasonstopshow2020",
+    "patterns": ["How many seasons was the top show on Netflix in 2020?", "Show me the number of seasons the top show on Netflix had in 2020."],
+    "responses": [],
+    "context_set": ""
+    } 
+]
+}
